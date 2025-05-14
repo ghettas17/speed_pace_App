@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Running Pace Calculator</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      padding-top: 50px;
+    }
+    .pace-display {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2 class="text-center mb-4">Running Speed to Pace Converter</h2>
+
+  <div class="form-group">
+    <label for="speedInput">Enter your speed (km/h):</label>
+    <input type="number" step="0.1" min="1" class="form-control" id="speedInput" placeholder="e.g., 12">
+  </div>
+
+  <div class="pace-display mb-4">
+    Pace: <span id="pace">--</span> min/km
+  </div>
+
+  <table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th>Distance</th>
+        <th>Estimated Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>5K</td>
+        <td id="time5k">--</td>
+      </tr>
+      <tr>
+        <td>10K</td>
+        <td id="time10k">--</td>
+      </tr>
+      <tr>
+        <td>Half Marathon (21.1K)</td>
+        <td id="time21k">--</td>
+      </tr>
+      <tr>
+        <td>Marathon (42.2K)</td>
+        <td id="time42k">--</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+  function formatTime(minutes) {
+    const h = Math.floor(minutes / 60);
+    const m = Math.floor(minutes % 60);
+    const s = Math.round((minutes - Math.floor(minutes)) * 60);
+
+    if (h > 0) {
+      return `${h}h ${m}m ${s}s`;
+    } else {
+      return `${m}m ${s}s`;
+    }
+  }
+
+  function updatePaceAndTimes(speed) {
+    if (speed < 1) return;
+
+    const pace = 60 / speed; // min/km
+    const paceMin = Math.floor(pace);
+    const paceSec = Math.round((pace - paceMin) * 60);
+
+    $("#pace").text(`${paceMin}:${paceSec.toString().padStart(2, '0')}`);
+
+    $("#time5k").text(formatTime(pace * 5));
+    $("#time10k").text(formatTime(pace * 10));
+    $("#time21k").text(formatTime(pace * 21.0975));
+    $("#time42k").text(formatTime(pace * 42.195));
+  }
+
+  $(document).ready(function() {
+    $("#speedInput").on("input", function() {
+      const speed = parseFloat($(this).val());
+      if (!isNaN(speed) && speed > 0) {
+        updatePaceAndTimes(speed);
+      } else {
+        $("#pace").text("--");
+        $("#time5k, #time10k, #time21k, #time42k").text("--");
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
